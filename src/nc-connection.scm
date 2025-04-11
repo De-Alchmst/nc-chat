@@ -11,18 +11,19 @@
       (tcp-listen port)
       (lambda ()
         (print "--- WELCOME TO NC-CHAT ---")
-        (client-handle (new-user)))
+        (client-handle (new-user (current-output-port))))
       #t)))
 
 
-  (define (client-handle user-id)
+  (define (client-handle uid)
     (let ((response (handle-command (read-line))))
       ; end connection
       (cond ((null? response)
              (print "BYE!")
-             (disconnect-user user-id))
+             (disconnect-user uid))
       ; continue connection
             (else
-             (print response)
-             (client-handle user-id))))))
+             (display "\x1b[1A")
+             (broadcast response)
+             (client-handle uid))))))
     

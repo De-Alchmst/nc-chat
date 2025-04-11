@@ -4,5 +4,5 @@
   (define (handle-command line)
     (if (or (equal? line "quit") (equal? line #!eof))
       '()
-      (string-append "Hi " line))))
+      (string-append " | " line))))
  
