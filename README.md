@@ -4,6 +4,6 @@ A simple chat over netcat(1).
 
 to compile, run:
 ```
-chicken-install srfi-1 tcp-server csm
+sudo chicken-install csm tcp-server srfi-1 srfi-13
 csm -program nc-chat 
 ```

@@ -1,7 +1,10 @@
-(module render (get-username-string)
+(module render (get-username-string info-exclemation)
   (import scheme (chicken base)
           srfi-1
           user) 
+
+  (define info-exclemation "\x1b[31m!! \x1b[39m")
+
 
   (define colors '((red      "31")
                    (green    "32")
