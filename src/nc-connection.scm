@@ -18,6 +18,7 @@
           (handle-exceptions exn
             ;; first exception handeler
             (disconnect-user cur-user)
+              
 
             (client-handle cur-user))))
 
@@ -28,9 +29,6 @@
     (let ((response (handle-command (read-line) cur-user)))
       ;; end connection
       (cond ((null? response)
-             (broadcast (string-append
-                          info-exclemation "buser "
-                          (get-username-string cur-user) " has left"))
              (print "BYE!")
              (disconnect-user cur-user))
 

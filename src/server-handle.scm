@@ -2,7 +2,7 @@
                        broadcast send-text)
   (import scheme (chicken base)
           srfi-1
-          user common)
+          user render common)
 
   (define next-user-id 1)
   (define user-list '())
@@ -20,7 +20,11 @@
   (define (disconnect-user cur-user)
     (set! user-list (filter
                       (lambda (usr) (not (= (user-id cur-user) (user-id usr))))
-                      user-list)))
+                      user-list))
+    
+    (broadcast (string-append info-exclemation "buser "
+                              (get-username-string cur-user) " has left")))
+
 
 
   (define (broadcast text)
