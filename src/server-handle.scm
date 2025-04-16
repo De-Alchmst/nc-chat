@@ -14,12 +14,12 @@
            (user (make-user-short uid port)))
       (inc! next-user-id)
       (add-to-list! user-list user)
-      uid))
+      user))
 
 
-  (define (disconnect-user uid)
+  (define (disconnect-user cur-user)
     (set! user-list (filter
-                      (lambda (usr) (= uid (user-id usr)))
+                      (lambda (usr) (not (= (user-id cur-user) (user-id usr))))
                       user-list)))
 
 
@@ -30,6 +30,7 @@
 
   (define (send-text text port)
     (display "\x1b[1G" port) ;; begining of line
+    (display "\x1b[K" port) ;; clear line right of cursor
     (display text port)
     (newline port)
     ; (display "\x1b[999C" port) ;; end of line

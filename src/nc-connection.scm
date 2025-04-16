@@ -1,7 +1,9 @@
 (module nc-connection (start-server)
-  (import scheme (chicken base) (chicken tcp) (chicken io)
+  (import scheme (chicken base) (chicken tcp) (chicken io) (chicken condition)
           tcp-server
-          command-handle server-handle)
+          command-handle server-handle user)
+
+  (tcp-read-timeout #f)
 
 
   (define (start-server port)
@@ -11,19 +13,26 @@
       (tcp-listen port)
       (lambda ()
         (print "--- WELCOME TO NC-CHAT ---")
-        (client-handle (new-user (current-output-port))))
+
+        (let ((cur-user (new-user (current-output-port))))
+          (handle-exceptions exn
+            ;; first exception handeler
+            (disconnect-user cur-user)
+
+            (client-handle cur-user))))
+
       #t)))
 
 
-  (define (client-handle uid)
-    (let ((response (handle-command (read-line))))
+  (define (client-handle cur-user)
+    (let ((response (handle-command (read-line) cur-user)))
       ; end connection
       (cond ((null? response)
              (print "BYE!")
-             (disconnect-user uid))
+             (disconnect-user cur-user))
       ; continue connection
             (else
-             (display "\x1b[1A")
+             (display "\x1b[1A") ;; one line up to replace prompt
              (broadcast response)
-             (client-handle uid))))))
+             (client-handle cur-user))))))
     
