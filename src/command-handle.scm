@@ -1,7 +1,7 @@
 (module command-handle (handle-command)
   (import scheme (chicken base)
           srfi-13
-          render user)
+          render user server-handle)
 
   (define help "\x1b[32m
 == HELP ==
@@ -10,6 +10,8 @@ silent commands:
   /set-name <new-username>
   /set-color <color>
   /list-colors
+  /set-description <description>
+  /describe <username>
   
 loud commands:
   !exit
@@ -60,7 +62,7 @@ loud commands:
 
         ((equal? command "/set-color")
          (if (null? (cdr words))
-           (print "wrong number of args")
+           (print (red "wrong number of args"))
            (let ((color (string->symbol (cadr words))))
              (if (valid-color? color)
                (set-user-color! user color)
@@ -68,6 +70,26 @@ loud commands:
 
         ((equal? command "/list-colors")
          (print-colors))
+
+        ((equal? command "/set-description")
+         (if (null? (cdr words))
+           (print (red "you are supposed to write something here!"))
+           (set-user-description! user
+                                  (string-drop line
+                                               (+ 1 ;; count in whitespace
+                                                  (string-length command))))))
+
+        ((equal? command "/describe")
+         (if (null? (cdr words))
+           (print (red "wrong number of args"))
+           (let* ((username (cadr words))
+                  (users (users-with-name username)))
+             (if (null? users)
+               (print (red username " is not with us right now"))
+               (for-each (lambda (user)
+                           (print (user-description user))
+                           (print "\x1b[0m--------"))
+                         users)))))
 
         (else
          (print (red "invalid command: " (car words))))))

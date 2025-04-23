@@ -1,5 +1,7 @@
 (module server-handle (new-user disconnect-user
-                       broadcast send-text)
+                       broadcast send-text
+                       users-with-name)
+
   (import scheme (chicken base)
           srfi-1
           user render common)
@@ -38,4 +40,9 @@
     (display text port)
     (newline port)
     ; (display "\x1b[999C" port) ;; end of line
-    (flush-output)))
+    (flush-output))
+
+
+  (define (users-with-name username)
+    (filter (lambda (user) (equal? (user-name user) username))
+            user-list)))
