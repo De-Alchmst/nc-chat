@@ -1,4 +1,6 @@
-(module render (get-username-string info-exclemation)
+(module render (get-username-string
+                info-exclemation
+                print-colors valid-color?)
   (import scheme (chicken base)
           srfi-1
           user) 
@@ -14,13 +16,26 @@
                    (cyan     "36")
                    (white    "37")
 
-                   (bred     "41")
-                   (bgreen   "42")
-                   (byellow  "43")
-                   (bblue    "44")
-                   (bmagenta "45")
-                   (bcyan    "46")
-                   (bwhite   "47")))
+                   (bred     "91")
+                   (bgreen   "92")
+                   (byellow  "93")
+                   (bblue    "94")
+                   (bmagenta "95")
+                   (bcyan    "96")
+                   (bwhite   "97")))
+
+
+  (define (print-colors)
+    (for-each
+      (lambda (color-pair)
+         (print "\x1b[" (cadr color-pair) "m" (car color-pair) "\x1b[0m"))
+      colors))
+
+
+  (define (valid-color? color)
+    (not (null? (filter
+                  (lambda (color-pair) (equal? (car color-pair) color))
+                  colors))))
 
 
   (define (get-username-string user)

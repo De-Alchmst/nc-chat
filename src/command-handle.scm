@@ -9,6 +9,7 @@ silent commands:
   /help
   /set-name <new-username>
   /set-color <color>
+  /list-colors
   
 loud commands:
   !exit
@@ -56,6 +57,17 @@ loud commands:
          (if (null? (cdr words))
            (print (red "wrong number of args"))
            (set-user-name! user (cadr words))))
+
+        ((equal? command "/set-color")
+         (if (null? (cdr words))
+           (print "wrong number of args")
+           (let ((color (string->symbol (cadr words))))
+             (if (valid-color? color)
+               (set-user-color! user color)
+               (print (red (cadr words) " is not a creative color!"))))))
+
+        ((equal? command "/list-colors")
+         (print-colors))
 
         (else
          (print (red "invalid command: " (car words))))))
