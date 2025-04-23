@@ -1,7 +1,8 @@
 (module nc-connection (start-server)
   (import scheme (chicken base) (chicken tcp) (chicken io) (chicken condition)
           tcp-server render
-          command-handle server-handle user)
+          command-handle server-handle user
+          handle-worlds)
 
   (tcp-read-timeout #f)
 
@@ -12,8 +13,8 @@
     ((make-tcp-server
       (tcp-listen port)
       (lambda ()
-        (print "--- WELCOME TO NC-CHAT ---")
-        (print "Type /help for help")
+        (print "--- WELCOME TO NC-CHAT ---\n")
+        (print motd)
 
         (let ((cur-user (new-user (current-output-port))))
           (handle-exceptions exn
