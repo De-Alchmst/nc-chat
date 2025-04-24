@@ -2,7 +2,7 @@
   (import scheme (chicken base) (chicken tcp) (chicken io) (chicken condition)
           tcp-server render
           commands-handle server-handle user
-          handle-worlds)
+          worlds-handle)
 
   (tcp-read-timeout #f)
 
