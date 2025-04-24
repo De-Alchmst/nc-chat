@@ -7,15 +7,18 @@
               user-world set-user-world!
               user-place set-user-place!)
   (import scheme (chicken base)
-          srfi-9)
+          srfi-9
+          worlds-handle)
 
 
   (define (make-user-short id port)
-    (make-user id port "anon" 'green "a user of nc-chat" 'none 'none))
+    (make-user id port
+               "anon" 'green "a user of nc-chat"
+               default-world (default-place)))
 
 
   (define-record-type <user>
-    (make-user id port name color description world)
+    (make-user id port name color description world place)
     user?
     (id user-id)
     (port user-port)

@@ -1,7 +1,7 @@
-(module command-handle (handle-command)
+(module commands-handle (handle-command)
   (import scheme (chicken base)
           srfi-13
-          render user server-handle)
+          render user server-handle worlds-handle)
 
   (define help "\x1b[32m
 == HELP ==
@@ -12,17 +12,25 @@ silent commands:
   /list-colors
   /set-description <description>
   /describe <username>
+  - /look-around
+  - /list-worlds
   
 loud commands:
   !exit
-\x1b[29m")
+  - !yell <text>
+  - !do <action>
+  - !goto <pathway>
+  - !warp <world>
+
+to interact witl object, prefix it with ':' like so ':item'
+interactions might be silent or loud, it depends really
+
+\x1b[0m")
 
   (define-syntax red
     (syntax-rules ()
       [(red str ...)
        (string-append "\x1b[31m" str ... "\x1b[39m")]))
-       
-
 
 
   (define (handle-command line user)
@@ -43,8 +51,6 @@ loud commands:
         ;; just a message
         (else
          (string-append (get-username-string user) " | " line)))))
-      
-
  
 
   (define (handle-silent-commands line user)
@@ -90,6 +96,10 @@ loud commands:
                            (print (user-description user))
                            (print "\x1b[0m--------"))
                          users)))))
+
+
+        ((equal? command "/list-worlds")
+         (list-worlds))
 
         (else
          (print (red "invalid command: " (car words))))))

@@ -1,7 +1,7 @@
 (module nc-connection (start-server)
   (import scheme (chicken base) (chicken tcp) (chicken io) (chicken condition)
           tcp-server render
-          command-handle server-handle user
+          commands-handle server-handle user
           handle-worlds)
 
   (tcp-read-timeout #f)

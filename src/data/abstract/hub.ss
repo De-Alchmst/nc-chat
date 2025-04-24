@@ -1,13 +1,14 @@
 (import (chicken time posix))
 
 (define hub
-  `((places
+  `((description "The main central area of this place")
+    (places
       (base
         (welcome "Welcome to the HUB!")
         (interactives
           (clock
             "An old clock hangs on the wall"
-            `(lambda () (append-string
+            ,(lambda () (string-append
                           "it's X o'clock."
                           (seconds->string)))))
         (pathways
