@@ -9,20 +9,20 @@
           (clock
             "An old clock hangs on the wall"
             ,(lambda () (string-append
-                          "it's X o'clock."
+                          "it's "
                           (seconds->string)))))
         (pathways
-          ((gallery-door
-             "This door leads to the gallery..."
-             gallery))))
+          (gallery-door
+            "This door leads to the gallery..."
+            gallery)))
 
       (gallery
         (welcome "Welcome to the gallery!")
         (interactives
           ())
         (pathways
-          ((base-door
-             "This door leads to the main area."
-             base)))))))
+          (base-door
+            "This door leads to the main area."
+            base))))))
            
            

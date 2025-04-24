@@ -1,4 +1,5 @@
-(module worlds-handle (motd default-world default-place list-worlds)
+(module worlds-handle (motd default-world default-place
+                            list-worlds look-around)
   (import scheme (chicken base)
           load-worlds)
 
@@ -11,6 +12,29 @@
 
   (define (list-worlds)
     (for-each print-world worlds))
+
+
+  (define (look-around place)
+    ;; at-tree-path does not work here and neither I nor Claude have any
+    ;; idea why. Let's hope it doesn't break any further...
+    (let ((welcome       (find-item 'welcome place))
+          (interactives  (find-item 'interactives place))
+          (pathways      (find-item 'pathways place)))
+
+      (if (not (null? welcome))
+        (print (val->string welcome)))
+
+      (cond ((not (null? interactives))
+             (print "\n--- interactives ---")
+             (for-each print-interactive interactives)))
+
+      ;; I guess you can just have one room?
+      (cond ((not (null? pathways))
+             (print "\n--- pathways ---")
+             (for-each print-pathway pathways)))
+
+      (print)))
+
 
 
 
@@ -33,7 +57,7 @@
        (cdar lst))
 
       (else
-        (find-item itm (cdr lst)))))
+       (find-item itm (cdr lst)))))
 
 
   ;; for easier treversal
@@ -52,6 +76,20 @@
        (at-tree-path (world->tree world) syms ...)]))
 
 
+  ;; to convert description value in variety of forms into a string
+  (define (val->string val)
+    (cond
+      ((null? val)       "")
+      ((list? val)       (val->string (car val)))
+      ((procedure? val)  (val))
+      ((symbol? val)     (symbol->string val))
+      (else              val)))
+        
+   
+  (define (world-places world)
+    (at-world-path world 'places))
+
+
   (define (print-world world)
     (print " | " world " | - " (world-description world)))
 
@@ -68,6 +106,10 @@
         (else
          (car desc)))))
 
-   
-  (define (world-places world)
-    (at-world-path world 'places)))
+
+  (define (print-interactive int)
+    (print " | " (car int) " | - " (val->string (cadr int))))
+
+  ;; they actually do the same thing...
+  (define (print-pathway pat)
+    (print-interactive pat)))

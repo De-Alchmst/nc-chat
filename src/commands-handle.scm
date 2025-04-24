@@ -12,14 +12,15 @@ silent commands:
   /list-colors
   /set-description <description>
   /describe <username>
-  - /look-around
-  - /list-worlds
+  /look-around
+  /list-worlds
   
 loud commands:
   !exit
   - !yell <text>
   - !do <action>
   - !goto <pathway>
+  - !runto <pathway>
   - !warp <world>
 
 to interact witl object, prefix it with ':' like so ':item'
@@ -100,6 +101,9 @@ interactions might be silent or loud, it depends really
 
         ((equal? command "/list-worlds")
          (list-worlds))
+
+        ((equal? command "/look-around")
+         (look-around (user-place user)))
 
         (else
          (print (red "invalid command: " (car words))))))
