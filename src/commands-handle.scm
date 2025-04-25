@@ -140,7 +140,10 @@ interactions might be silent or loud, it depends really
                 (print (red (car rest) " is not a valid pathway! I think...")))
 
                (else
+                 (broadcast-place (user-moved-from-string user) new-place)
                  (set-user-place! user new-place)
+                 (broadcast-place (user-moved-to-string user) cur-place)
+
                  (if (equal? command "!goto")
                    (look-around new-place)))))))
                    

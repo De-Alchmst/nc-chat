@@ -1,8 +1,8 @@
-(module render (user-left-string
+(module render (user-left-string user-moved-to-string user-moved-from-string
                 user-say-string user-yell-string
                 info-exclemation
                 print-colors valid-color?
-                red)
+                red green)
   (import scheme (chicken base)
           srfi-1
           user) 
@@ -32,6 +32,11 @@
       [(red str ...)
        (string-append "\x1b[31m" str ... "\x1b[39m")]))
 
+  (define-syntax green
+    (syntax-rules ()
+      [(green str ...)
+       (string-append "\x1b[32m" str ... "\x1b[39m")]))
+
 
   (define (user-say-string user text)
     (string-append (get-username-string user) " | " text))
@@ -43,7 +48,19 @@
 
   (define (user-left-string user)
     (string-append info-exclemation "user "
-                   (get-username-string user) " has left"))
+                   (get-username-string user) " has left the world. R.I.P."))
+
+
+  (define (user-moved-to-string user)
+    (string-append info-exclemation "user "
+                   (get-username-string user) " has moved to "
+                   (green (symbol->string (car (user-place user))))))
+
+
+  (define (user-moved-from-string user)
+    (string-append info-exclemation "user "
+                   (get-username-string user) " has moved in from "
+                   (green (symbol->string (car (user-place user))))))
 
 
   (define (print-colors)
