@@ -17,7 +17,7 @@ silent commands:
   
 loud commands:
   !exit
-  - !yell <text>
+  !yell <text>
   - !do <action>
   !goto <pathway>
   !runto <pathway>
@@ -120,6 +120,18 @@ interactions might be silent or loud, it depends really
       (cond
         ((equal? command "!exit")
          '())
+
+        ((equal? command "!yell")
+         (if (null? rest)
+           (print (red "You cannot yell nothing..."))
+           (broadcast-world (string-append
+                              (get-username-string user)
+                              (red " !! ")
+                              (string-drop line
+                                           (+ 1 ;; count in whitespace
+                                             (string-length command))))
+                            (user-world user))))
+
 
         ((or
            (equal? command "!goto")
