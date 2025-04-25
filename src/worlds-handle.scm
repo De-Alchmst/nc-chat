@@ -8,8 +8,7 @@
 
 
   (define (default-place #!optional (world default-world))
-    ;; find-item removes the key and so do I...
-    (cdar (world-places world)))
+    (car (world-places world)))
 
 
   (define (list-worlds)
@@ -56,7 +55,8 @@
       world))
 
 
-  (define (find-item itm lst)
+  ;; with the key
+  (define (find-item* itm lst)
     (cond
       ((null? lst)
        '())
@@ -65,10 +65,18 @@
          (list? (car lst))
          (not (null? (car lst)))
          (equal? (caar lst) itm))
-       (cdar lst))
+       (car lst))
 
       (else
-       (find-item itm (cdr lst)))))
+       (find-item* itm (cdr lst)))))
+
+
+  ;; wthout the key
+  (define (find-item itm lst)
+    (let ((out (find-item* itm lst)))
+      (if (null? out)
+        '()
+        (cdr out))))
 
 
   ;; for easier treversal
@@ -102,7 +110,7 @@
 
 
   (define (world-place world place-sym)
-    (at-world-path world 'places place-sym))
+    (find-item* place-sym (world-places world)))
 
 
   (define (print-world world)
