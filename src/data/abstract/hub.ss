@@ -12,16 +12,15 @@
                           "it's "
                           (seconds->string)))))
         (pathways
-          (gallery-door
+          (gallery
             "This door leads to the gallery..."
             gallery)))
 
       (gallery
         (welcome "Welcome to the gallery!")
-        (interactives
-          ())
+        (interactives)
         (pathways
-          (base-door
+          (base
             "This door leads to the main area."
             base))))))
            

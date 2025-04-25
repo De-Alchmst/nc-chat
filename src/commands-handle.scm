@@ -19,8 +19,8 @@ loud commands:
   !exit
   - !yell <text>
   - !do <action>
-  - !goto <pathway>
-  - !runto <pathway>
+  !goto <pathway>
+  !runto <pathway>
   - !warp <world>
 
 to interact witl object, prefix it with ':' like so ':item'
@@ -56,30 +56,31 @@ interactions might be silent or loud, it depends really
 
   (define (handle-silent-commands line user)
     (let* ((words (string-tokenize line))
-           (command (car words)))
+           (command (car words))
+           (rest (cdr words)))
 
       (cond
         ((equal? command "/help")
          (print help))
 
         ((equal? command "/set-name")
-         (if (null? (cdr words))
+         (if (null? rest)
            (print (red "wrong number of args"))
-           (set-user-name! user (cadr words))))
+           (set-user-name! user (car rest))))
 
         ((equal? command "/set-color")
-         (if (null? (cdr words))
+         (if (null? rest)
            (print (red "wrong number of args"))
-           (let ((color (string->symbol (cadr words))))
+           (let ((color (string->symbol (car rest))))
              (if (valid-color? color)
                (set-user-color! user color)
-               (print (red (cadr words) " is not a creative color!"))))))
+               (print (red (car rest) " is not a creative color!"))))))
 
         ((equal? command "/list-colors")
          (print-colors))
 
         ((equal? command "/set-description")
-         (if (null? (cdr words))
+         (if (null? rest)
            (print (red "you are supposed to write something here!"))
            (set-user-description! user
                                   (string-drop line
@@ -87,9 +88,9 @@ interactions might be silent or loud, it depends really
                                                   (string-length command))))))
 
         ((equal? command "/describe")
-         (if (null? (cdr words))
+         (if (null? rest)
            (print (red "wrong number of args"))
-           (let* ((username (cadr words))
+           (let* ((username (car rest))
                   (users (users-with-name username)))
              (if (null? users)
                (print (red username " is not with us right now"))
@@ -106,21 +107,41 @@ interactions might be silent or loud, it depends really
          (look-around (user-place user)))
 
         (else
-         (print (red "invalid command: " (car words))))))
+         (print (red "invalid command: " command)))))
 
     "")
 
 
   (define (handle-loud-commands line user)
     (let* ((words (string-tokenize line))
-           (command (car words)))
+           (command (car words))
+           (rest (cdr words)))
 
       (cond
         ((equal? command "!exit")
          '())
 
+        ((or
+           (equal? command "!goto")
+           (equal? command "!runto"))
+         (if (null? rest)
+           (print (red "wrong number of args"))
+
+           (let* ((cur-place (user-place user))
+                  (new-place (goto-pathway (string->symbol (car rest))
+                                           cur-place (user-world user))))
+             (cond
+               ((null? new-place)
+                (print (red (car rest) " is not a valid pathway! I think...")))
+
+               (else
+                 (set-user-place! user new-place)
+                 (if (equal? command "!goto")
+                   (look-around new-place)))))))
+                   
+
         (else
-         (print (red "invalid command: " (car words)))
-         "")))))
+         (print (red "invalid command: " command))))
+      "")))
 
         

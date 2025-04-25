@@ -1,5 +1,6 @@
 (module worlds-handle (motd default-world default-place
-                            list-worlds look-around)
+                            list-worlds look-around
+                            goto-pathway)
   (import scheme (chicken base)
           load-worlds)
 
@@ -34,6 +35,15 @@
              (for-each print-pathway pathways)))
 
       (print)))
+
+
+  (define (goto-pathway new-key current-place world)
+    (let ((new-place-entry (find-item new-key
+                                      (find-item 'pathways current-place))))
+      (if (null? new-place-entry)
+        '()
+        (world-place world (cadr new-place-entry)))))
+
 
 
 
@@ -88,6 +98,15 @@
    
   (define (world-places world)
     (at-world-path world 'places))
+
+
+  (define (world-place world place-sym)
+    (let ((place (at-world-path world 'places place-sym)))
+      (if (null? place)
+        '()
+        ;; find-item removest the first key, which I want to keep here just
+        ;; in case
+        (cons place-sym place))))
 
 
   (define (print-world world)
