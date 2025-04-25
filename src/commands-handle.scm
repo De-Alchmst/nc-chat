@@ -7,8 +7,6 @@
 == HELP ==
 silent commands:
   /help
-  /set-name <new-username>
-  /set-color <color>
   /list-colors
   /set-description <description>
   /describe <username>
@@ -17,6 +15,8 @@ silent commands:
   
 loud commands:
   !exit
+  !set-name <new-username>
+  !set-color <color>
   !yell <text>
   - !do <action>
   !goto <pathway>
@@ -57,19 +57,6 @@ interactions might be silent or loud, it depends really
       (cond
         ((equal? command "/help")
          (print help))
-
-        ((equal? command "/set-name")
-         (if (null? rest)
-           (print (red "wrong number of args"))
-           (set-user-name! user (car rest))))
-
-        ((equal? command "/set-color")
-         (if (null? rest)
-           (print (red "wrong number of args"))
-           (let ((color (string->symbol (car rest))))
-             (if (valid-color? color)
-               (set-user-color! user color)
-               (print (red (car rest) " is not a creative color!"))))))
 
         ((equal? command "/list-colors")
          (print-colors))
@@ -115,6 +102,25 @@ interactions might be silent or loud, it depends really
       (cond
         ((equal? command "!exit")
          '())
+
+        ((equal? command "!set-name")
+         (if (null? rest)
+           (print (red "wrong number of args"))
+           (let ((old-name (user-name user)))
+             (set-user-name! user (car rest))
+             (broadcast-world (user-name-change-string old-name user)
+                              (user-world user)))))
+
+        ((equal? command "!set-color")
+         (if (null? rest)
+           (print (red "wrong number of args"))
+           (let ((color (string->symbol (car rest))))
+             (if (valid-color? color)
+               (let ((old-color (user-color user)))
+                 (set-user-color! user color)
+                 (broadcast-world (user-color-change-string old-color user)
+                                  (user-world user)))
+               (print (red (car rest) " is not a creative color!"))))))
 
         ((equal? command "!yell")
          (if (null? rest)

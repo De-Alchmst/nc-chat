@@ -1,8 +1,10 @@
 (module render (user-left-string user-moved-to-string user-moved-from-string
+                user-name-change-string user-color-change-string
                 user-say-string user-yell-string
                 info-exclemation
                 print-colors valid-color?
-                red green)
+                in-color red green
+                symbol->color-id)
   (import scheme (chicken base)
           srfi-1
           user) 
@@ -27,15 +29,26 @@
                    (bwhite   "97")))
 
 
+  (define (symbol->color-id sym)
+    (let ((item (filter (lambda (x) (eqv? sym (car x))) colors)))
+      (if (null? item) "39" (cadar item))))
+
+
+  (define-syntax in-color
+    (syntax-rules ()
+      [(in-color color str ...)
+       (string-append "\x1b[" (symbol->color-id color) "m"
+                      str ... "\x1b[39m")]))
+
   (define-syntax red
     (syntax-rules ()
       [(red str ...)
-       (string-append "\x1b[31m" str ... "\x1b[39m")]))
+       (in-color 'red str ...)]))
 
   (define-syntax green
     (syntax-rules ()
       [(green str ...)
-       (string-append "\x1b[32m" str ... "\x1b[39m")]))
+       (in-color 'green str ...)]))
 
 
   (define (user-say-string user text)
@@ -63,10 +76,28 @@
                    (green (symbol->string (car (user-place user))))))
 
 
+  (define (user-name-change-string old-name user)
+    (string-append info-exclemation "user "
+                   (in-color (user-color user) old-name) " is now known as "
+                   (get-username-string user)))
+
+
+  (define (user-name-change-string old-name user)
+    (string-append info-exclemation "user "
+                   (in-color (user-color user) old-name) " is now known as "
+                   (get-username-string user)))
+
+
+  (define (user-color-change-string old-color user)
+    (string-append info-exclemation "user "
+                   (in-color old-color (user-name user)) " is now known as "
+                   (get-username-string user)))
+
+
   (define (print-colors)
     (for-each
       (lambda (color-pair)
-         (print "\x1b[" (cadr color-pair) "m" (car color-pair) "\x1b[0m"))
+         (in-color (cadr color-pair) (car color-pair)))
       colors))
 
 
@@ -77,10 +108,5 @@
 
 
   (define (get-username-string user)
-    (string-append "\x1b[" (symbol->color-id (user-color user)) "m"
-                   (user-name user) "\x1b[39m"))
-
-  (define (symbol->color-id sym)
-    (let ((item (filter (lambda (x) (eqv? sym (car x))) colors)))
-      (if (null? item) "39" (cadar item)))))
+    (in-color (user-color user) (user-name user))))
 
