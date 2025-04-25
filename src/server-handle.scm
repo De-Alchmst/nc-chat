@@ -1,5 +1,6 @@
 (module server-handle (new-user disconnect-user
-                       broadcast send-text
+                       send-text
+                       broadcast-server broadcast-world broadcast-place
                        users-with-name)
 
   (import scheme (chicken base)
@@ -19,19 +20,34 @@
       user))
 
 
-  (define (disconnect-user cur-user)
+  (define (disconnect-user user)
     (set! user-list (filter
-                      (lambda (usr) (not (= (user-id cur-user) (user-id usr))))
+                      (lambda (usr) (not (= (user-id user) (user-id usr))))
                       user-list))
     
-    (broadcast (string-append info-exclemation "buser "
-                              (get-username-string cur-user) " has left")))
+    (broadcast-world (string-append info-exclemation "buser "
+                                    (get-username-string user) " has left")
+                     (user-world user)))
+
+
+  (define (broadcast-server text)
+    (broadcast text user-list))
+
+
+  (define (broadcast-world text world)
+    (broadcast text (filter (lambda (user) (eq? (user-world user) world))
+                            user-list)))
+
+
+  (define (broadcast-place text place)
+    (broadcast text (filter (lambda (user) (eq? (user-place user) place))
+                            user-list)))
 
 
 
-  (define (broadcast text)
+  (define (broadcast text users)
     (for-each (lambda (user) (send-text text (user-port user)))
-              user-list))
+              users))
 
 
   (define (send-text text port)

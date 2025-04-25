@@ -16,31 +16,31 @@
         (print "--- WELCOME TO NC-CHAT ---\n")
         (print motd)
 
-        (let ((cur-user (new-user (current-output-port))))
+        (let ((user (new-user (current-output-port))))
           (handle-exceptions exn
             ;; first exception handeler
-            (disconnect-user cur-user)
+            (disconnect-user user)
               
 
-            (client-handle cur-user))))
+            (client-handle user))))
 
       #t)))
 
 
-  (define (client-handle cur-user)
-    (let ((response (handle-command (read-line) cur-user)))
+  (define (client-handle user)
+    (let ((response (handle-command (read-line) user)))
       ;; end connection
       (cond ((null? response)
              (print "BYE!")
-             (disconnect-user cur-user))
+             (disconnect-user user))
 
       ;; empty message
             ((equal? response "")
-             (client-handle cur-user))
+             (client-handle user))
 
       ;; message
             (else
              (display "\x1b[1A") ;; one line up to replace prompt
-             (broadcast response)
-             (client-handle cur-user))))))
+             (broadcast-place response (user-place user))
+             (client-handle user))))))
     

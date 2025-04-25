@@ -8,7 +8,8 @@
 
 
   (define (default-place #!optional (world default-world))
-    (car (world-places world)))
+    ;; find-item removes the key and so do I...
+    (cdar (world-places world)))
 
 
   (define (list-worlds)
@@ -101,12 +102,7 @@
 
 
   (define (world-place world place-sym)
-    (let ((place (at-world-path world 'places place-sym)))
-      (if (null? place)
-        '()
-        ;; find-item removest the first key, which I want to keep here just
-        ;; in case
-        (cons place-sym place))))
+    (at-world-path world 'places place-sym))
 
 
   (define (print-world world)
