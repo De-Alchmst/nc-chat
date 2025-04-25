@@ -25,9 +25,7 @@
                       (lambda (usr) (not (= (user-id user) (user-id usr))))
                       user-list))
     
-    (broadcast-world (string-append info-exclemation "buser "
-                                    (get-username-string user) " has left")
-                     (user-world user)))
+    (broadcast-world (user-left-string user) (user-world user)))
 
 
   (define (broadcast-server text)

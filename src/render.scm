@@ -1,6 +1,8 @@
-(module render (get-username-string
+(module render (user-left-string
+                user-say-string user-yell-string
                 info-exclemation
-                print-colors valid-color?)
+                print-colors valid-color?
+                red)
   (import scheme (chicken base)
           srfi-1
           user) 
@@ -23,6 +25,25 @@
                    (bmagenta "95")
                    (bcyan    "96")
                    (bwhite   "97")))
+
+
+  (define-syntax red
+    (syntax-rules ()
+      [(red str ...)
+       (string-append "\x1b[31m" str ... "\x1b[39m")]))
+
+
+  (define (user-say-string user text)
+    (string-append (get-username-string user) " | " text))
+
+
+  (define (user-yell-string user text)
+    (string-append (get-username-string user) (red " !! ") text))
+
+
+  (define (user-left-string user)
+    (string-append info-exclemation "user "
+                   (get-username-string user) " has left"))
 
 
   (define (print-colors)

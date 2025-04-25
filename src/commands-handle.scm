@@ -28,11 +28,6 @@ interactions might be silent or loud, it depends really
 
 \x1b[0m")
 
-  (define-syntax red
-    (syntax-rules ()
-      [(red str ...)
-       (string-append "\x1b[31m" str ... "\x1b[39m")]))
-
 
   (define (handle-command line user)
     (let ((line (string-trim-both line)))
@@ -51,7 +46,7 @@ interactions might be silent or loud, it depends really
 
         ;; just a message
         (else
-         (string-append (get-username-string user) " | " line)))))
+          (user-say-string user line)))))
  
 
   (define (handle-silent-commands line user)
@@ -124,9 +119,7 @@ interactions might be silent or loud, it depends really
         ((equal? command "!yell")
          (if (null? rest)
            (print (red "You cannot yell nothing..."))
-           (broadcast-world (string-append
-                              (get-username-string user)
-                              (red " !! ")
+           (broadcast-world (user-yell-string user
                               (string-drop line
                                            (+ 1 ;; count in whitespace
                                              (string-length command))))
