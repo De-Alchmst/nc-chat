@@ -1,10 +1,14 @@
-(module worlds-handle (motd default-world default-place
+(module worlds-handle (get-motd default-world default-place
                             list-worlds look-around
                             goto-pathway)
   (import scheme (chicken base)
           load-worlds)
 
   (define default-world (car worlds))
+
+
+  (define (get-motd)
+    (val->string motd))
 
 
   (define (default-place #!optional (world default-world))
@@ -71,7 +75,7 @@
        (find-item* itm (cdr lst)))))
 
 
-  ;; wthout the key
+  ;; without the key
   (define (find-item itm lst)
     (let ((out (find-item* itm lst)))
       (if (null? out)

@@ -14,7 +14,7 @@
       (tcp-listen port)
       (lambda ()
         (print "--- WELCOME TO NC-CHAT ---\n")
-        (print motd)
+        (print (get-motd))
 
         (let ((user (new-user (current-output-port))))
           (handle-exceptions exn
