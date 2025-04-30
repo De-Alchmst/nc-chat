@@ -1,7 +1,8 @@
 (module server-handle (new-user disconnect-user
                        send-text
                        broadcast-server broadcast-world broadcast-place
-                       users-with-name)
+                       users-with-name users-in-place
+                       list-users list-users-place)
 
   (import scheme (chicken base)
           srfi-1
@@ -32,15 +33,15 @@
     (broadcast text user-list))
 
 
-  (define (broadcast-world text world)
-    (broadcast text (filter (lambda (user) (eq? (user-world user) world))
+  (define (broadcast-world text world #!key (exception '()))
+    (broadcast text (filter (lambda (user) (and (eq? (user-world user) world)
+                                                (not (eq? user exception))))
                             user-list)))
 
 
   (define (broadcast-place text place)
     (broadcast text (filter (lambda (user) (eq? (user-place user) place))
                             user-list)))
-
 
 
   (define (broadcast text users)
@@ -59,4 +60,18 @@
 
   (define (users-with-name username)
     (filter (lambda (user) (equal? (user-name user) username))
+            user-list))
+
+
+  (define (list-users-place place)
+    (list-users (users-in-place place)))
+
+
+  (define (list-users #!optional (users user-list))
+    (for-each print-user users)
+    (newline))
+
+  
+  (define (users-in-place place)
+    (filter (lambda (u) (eq? (user-place u) place))
             user-list)))

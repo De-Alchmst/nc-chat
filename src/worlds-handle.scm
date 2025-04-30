@@ -1,8 +1,8 @@
 (module worlds-handle (get-motd default-world default-place
-                            list-worlds look-around
-                            goto-pathway)
+                       list-worlds look-around
+                       go-to-pathway warp-to-world)
   (import scheme (chicken base)
-          load-worlds)
+          common load-worlds)
 
   (define default-world (car worlds))
 
@@ -41,12 +41,18 @@
       (print)))
 
 
-  (define (goto-pathway new-key current-place world)
+  (define (go-to-pathway new-key current-place world)
     (let ((new-place-entry (find-item new-key
                                       (find-item 'pathways current-place))))
       (if (null? new-place-entry)
         '()
         (world-place world (cadr new-place-entry)))))
+
+
+  (define (warp-to-world world-name)
+    (if (in? world-name worlds)
+      (symbol->value world-name)
+      '()))
 
 
 

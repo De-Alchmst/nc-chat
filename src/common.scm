@@ -1,4 +1,4 @@
-(module common (inc! add-to-list!)
+(module common (inc! add-to-list! in?)
   (import scheme (chicken base))
 
   (define-syntax inc!
@@ -8,8 +8,20 @@
       [(inc! x)
        (inc! x 1)]))
 
+
   (define-syntax add-to-list!
     (syntax-rules ()
       [(add-to-list! lst itm)
-       (set! lst (cons itm lst))])))
+       (set! lst (cons itm lst))]))
 
+
+  (define (in? itm lst)
+    (cond
+      ((null? lst)
+       '())
+
+      ((equal? (car lst) itm)
+       (car lst))
+
+      (else
+       (in? itm (cdr lst))))))

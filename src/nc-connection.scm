@@ -17,6 +17,9 @@
         (print (get-motd))
 
         (let ((user (new-user (current-output-port))))
+          (broadcast-world (user-joined-string user)
+                           (user-world user)
+                           #:exception user)
           (handle-exceptions exn
             ;; first exception handeler
             (disconnect-user user)

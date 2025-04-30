@@ -12,13 +12,15 @@ silent commands:
   /describe <username>
   /look-around
   /list-worlds
+  /list-users
+  /list-users-world
   
 loud commands:
   !exit
   !set-name <new-username>
   !set-color <color>
   !yell <text>
-  - !do <action>
+  !do <action>
   !goto <pathway>
   !runto <pathway>
   - !warp <world>
@@ -88,6 +90,12 @@ interactions might be silent or loud, it depends really
         ((equal? command "/look-around")
          (look-around (user-place user)))
 
+        ((equal? command "/list-users-world")
+         (list-users))
+
+        ((equal? command "/list-users")
+         (list-users-place (user-place user)))
+
         (else
          (print (red "invalid command: " command)))))
 
@@ -139,7 +147,7 @@ interactions might be silent or loud, it depends really
            (print (red "wrong number of args"))
 
            (let* ((cur-place (user-place user))
-                  (new-place (goto-pathway (string->symbol (car rest))
+                  (new-place (go-to-pathway (string->symbol (car rest))
                                            cur-place (user-world user))))
              (cond
                ((null? new-place)
@@ -150,9 +158,34 @@ interactions might be silent or loud, it depends really
                  (set-user-place! user new-place)
                  (broadcast-place (user-moved-to-string user) cur-place)
 
-                 (if (equal? command "!goto")
-                   (look-around new-place)))))))
-                   
+                 (cond
+                   ((equal? command "!goto")
+                    (look-around new-place)
+                    (print "\n--- users ---")
+                    (list-users-place (user-place user)))))))))
+
+        ((equal? command "!do")
+         (if (null? rest)
+           (print (red "you cannot do nothing"))
+           (broadcast-place
+             (do-string user (string-drop line (+ 1 ;; count in whitespace
+                                                  (string-length command))))
+             (user-place user))))
+
+        ((equal? command "!warp")
+         (if (null? rest)
+           (print "warp where?")
+           (let ((world (warp-to-world (string->symbol (car rest)))))
+             (cond
+               ((null? world)
+                (print (red (car rest) " is not a valid world.")))
+               (else
+                (broadcast-world (user-left-string user)
+                                 (user-world user))
+                (set-user-world! user world)
+                (broadcast-world (user-joined-string user)
+                                 (user-world user)))))))
+          
 
         (else
          (print (red "invalid command: " command))))

@@ -1,10 +1,13 @@
-(module render (user-left-string user-moved-to-string user-moved-from-string
+(module render (user-left-string user-joined-string
+                user-moved-to-string user-moved-from-string
                 user-name-change-string user-color-change-string
                 user-say-string user-yell-string
                 info-exclemation
+                do-string
                 print-colors valid-color?
                 in-color red green
-                symbol->color-id)
+                symbol->color-id
+                print-user)
   (import scheme (chicken base)
           srfi-1
           user) 
@@ -50,6 +53,11 @@
       [(green str ...)
        (in-color 'green str ...)]))
 
+  (define-syntax cyan
+    (syntax-rules ()
+      [(cyan str ...)
+       (in-color 'cyan str ...)]))
+
 
   (define (user-say-string user text)
     (string-append (get-username-string user) " | " text))
@@ -57,6 +65,11 @@
 
   (define (user-yell-string user text)
     (string-append (get-username-string user) (red " !! ") text))
+
+
+  (define (user-joined-string user)
+    (string-append info-exclemation "user "
+                   (get-username-string user) " has joined the world"))
 
 
   (define (user-left-string user)
@@ -94,6 +107,10 @@
                    (get-username-string user)))
 
 
+  (define (do-string user action)
+    (string-append (get-username-string user) (cyan " **" action "**")))
+
+
   (define (print-colors)
     (for-each
       (lambda (color-pair)
@@ -108,5 +125,8 @@
 
 
   (define (get-username-string user)
-    (in-color (user-color user) (user-name user))))
+    (in-color (user-color user) (user-name user)))
 
+  (define (print-user user)
+    (display (get-username-string user))
+    (display "  ")))
