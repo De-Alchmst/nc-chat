@@ -1,1 +1,1 @@
-(define worlds '(hub))
+(define worlds '(hub hall))

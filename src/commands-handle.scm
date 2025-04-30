@@ -1,4 +1,4 @@
-(module commands-handle (handle-command)
+(module commands-handle (handle-command look-around+)
   (import scheme (chicken base)
           srfi-13
           render user server-handle worlds-handle)
@@ -23,12 +23,18 @@ loud commands:
   !do <action>
   !goto <pathway>
   !runto <pathway>
-  - !warp <world>
+  !warp <world>
 
 to interact witl object, prefix it with ':' like so ':item'
 interactions might be silent or loud, it depends really
 
 \x1b[0m")
+
+
+  (define (look-around+ place)
+    (look-around place)
+    (print "\n--- users ---")
+    (list-users-place place))
 
 
   (define (handle-command line user)
@@ -46,9 +52,21 @@ interactions might be silent or loud, it depends really
         ((eqv? (car (string->list line)) #\!)
          (handle-loud-commands line user))
 
+        ;; interactions
+        ((eqv? (car (string->list line)) #\:)
+         (handle-interactions line user))
+
         ;; just a message
         (else
           (user-say-string user line)))))
+
+
+  (define (handle-interactions line user)
+    (let* ((int (string->symbol (string-drop line 1))))
+      (if (valid-interactible? int (user-place user))
+        (interact int (user-place user))
+        (print (red "invalid interactible " (symbol->string int) "."))))
+    "")
  
 
   (define (handle-silent-commands line user)
@@ -158,11 +176,8 @@ interactions might be silent or loud, it depends really
                  (set-user-place! user new-place)
                  (broadcast-place (user-moved-to-string user) cur-place)
 
-                 (cond
-                   ((equal? command "!goto")
-                    (look-around new-place)
-                    (print "\n--- users ---")
-                    (list-users-place (user-place user)))))))))
+                 (if (equal? command "!goto")
+                   (look-around+ (user-place user))))))))
 
         ((equal? command "!do")
          (if (null? rest)
@@ -179,12 +194,17 @@ interactions might be silent or loud, it depends really
              (cond
                ((null? world)
                 (print (red (car rest) " is not a valid world.")))
+
                (else
                 (broadcast-world (user-left-string user)
-                                 (user-world user))
+                                 (user-world user)
+                                 #:exception user)
                 (set-user-world! user world)
+                (set-user-place! user (default-place world))
                 (broadcast-world (user-joined-string user)
-                                 (user-world user)))))))
+                                 world
+                                 #:exception user)
+                (look-around+ (user-place user)))))))
           
 
         (else

@@ -18,7 +18,7 @@
   (define (in? itm lst)
     (cond
       ((null? lst)
-       '())
+       #f)
 
       ((equal? (car lst) itm)
        (car lst))

@@ -2,7 +2,7 @@
   (import scheme (chicken base) (chicken tcp) (chicken io) (chicken condition)
           tcp-server render
           commands-handle server-handle user
-          worlds-handle)
+          worlds-handle commands-handle)
 
   (tcp-read-timeout #f)
 
@@ -20,6 +20,8 @@
           (broadcast-world (user-joined-string user)
                            (user-world user)
                            #:exception user)
+          (look-around+ (user-place user))
+
           (handle-exceptions exn
             ;; first exception handeler
             (disconnect-user user)

@@ -1,6 +1,7 @@
 (module worlds-handle (get-motd default-world default-place
                        list-worlds look-around
-                       go-to-pathway warp-to-world)
+                       go-to-pathway warp-to-world
+                       valid-interactible? interact)
   (import scheme (chicken base)
           common load-worlds)
 
@@ -55,6 +56,14 @@
       '()))
 
 
+  (define (valid-interactible? int place)
+    (not (null? (find-interactible int place))))
+
+  
+  (define (interact int place)
+    (print (cadr (find-interactible int place)))
+    (print (val->string (cadr (find-interactible int place)))))
+
 
 
 
@@ -90,6 +99,7 @@
 
 
   ;; for easier treversal
+  ;; does not work for places for some reason
   (define-syntax at-tree-path
     (syntax-rules ()
       [(at-tree-path tree sym)
@@ -113,6 +123,10 @@
       ((procedure? val)  (val))
       ((symbol? val)     (symbol->string val))
       (else              val)))
+
+
+  (define (find-interactible int place)
+    (find-item int (find-item 'interactives place)))
         
    
   (define (world-places world)
