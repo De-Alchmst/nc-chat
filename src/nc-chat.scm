@@ -1,5 +1,5 @@
 (module nc-chat ()
   (import scheme (chicken base)
-          nc-connection)
+          nc-connection load-worlds)
 
-  (start-server 9999))
+  (start-server port))
