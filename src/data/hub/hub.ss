@@ -8,9 +8,9 @@
         (interactives
           (clock
             "An old clock hangs on the wall"
-            ,(lambda () (string-append
-                          "it's "
-                          (seconds->string)))))
+            ,(lambda (txt u) (string-append
+                               "it's "
+                               (seconds->string)))))
         (pathways
           (gallery
             "This door leads to the gallery..."

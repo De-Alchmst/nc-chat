@@ -26,7 +26,11 @@ loud commands:
   !warp <world>
 
 to interact witl object, prefix it with ':' like so ':item'
-interactions might be silent or loud, it depends really
+interactions might be silent or loud, it depends really.
+Some objects might take additional arguments. Such objects
+should specify it by starting their description with <args>,
+but it's not the rule.
+Hidden stuff are fun!
 
 \x1b[0m")
 
@@ -62,9 +66,12 @@ interactions might be silent or loud, it depends really
 
 
   (define (handle-interactions line user)
-    (let* ((int (string->symbol (string-drop line 1))))
+    (let* ((words (string-tokenize line))
+           (int   (string->symbol (string-drop (car words) 1)))
+           (args  (cdr words)))
+
       (if (valid-interactible? int (user-place user))
-        (interact int (user-place user))
+        (interact int args user (user-place user))
         (print (red "invalid interactible " (symbol->string int) "."))))
     "")
  

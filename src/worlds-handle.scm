@@ -60,9 +60,9 @@
     (not (null? (find-interactible int place))))
 
   
-  (define (interact int place)
-    (print (cadr (find-interactible int place)))
-    (print (val->string (cadr (find-interactible int place)))))
+  (define (interact int args user place)
+    (print (interactible->string (cadr (find-interactible int place))
+                                 args user)))
 
 
 
@@ -123,6 +123,12 @@
       ((procedure? val)  (val))
       ((symbol? val)     (symbol->string val))
       (else              val)))
+
+
+  (define (interactible->string val args user)
+    (if (procedure? val)
+      (val args user)
+      (val->string val)))
 
 
   (define (find-interactible int place)
