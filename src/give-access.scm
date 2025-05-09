@@ -4,10 +4,14 @@
 
   (define (grant-world-access)
     (export-access
-      broadcast-server
-      (lambda (u txt #!key (exception '()))
-        (broadcast-world txt (user-world u) #:exception exception))
-      (lambda (u txt) (broadcast-place txt (user-place u)))
+      (lambda (u txt #!key (exception #f))
+        (broadcast-server txt #:exception (if exception u '())))
+
+      (lambda (u txt #!key (exception #f))
+        (broadcast-world txt (user-world u) #:exception (if exception u '())))
+
+      (lambda (u txt #!key (exception #f))
+        (broadcast-place txt (user-place u) #:exception (if exception u '())))
 
 
       user?

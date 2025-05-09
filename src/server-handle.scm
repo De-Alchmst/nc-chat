@@ -29,8 +29,9 @@
     (broadcast-world (user-left-string user) (user-world user)))
 
 
-  (define (broadcast-server text)
-    (broadcast text user-list))
+  (define (broadcast-server text #!key (exception '()))
+    (broadcast text (filter (lambda (user) (not (eq? user exception)))
+                            user-list)))
 
 
   (define (broadcast-world text world #!key (exception '()))
@@ -39,8 +40,9 @@
                             user-list)))
 
 
-  (define (broadcast-place text place)
-    (broadcast text (filter (lambda (user) (eq? (user-place user) place))
+  (define (broadcast-place text place #!key (exception '()))
+    (broadcast text (filter (lambda (user) (and (eq? (user-place user) place)
+                                                (not (eq? user exception))))
                             user-list)))
 
 
