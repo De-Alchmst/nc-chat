@@ -1,8 +1,8 @@
-(module give-access (grant-world-access)
+(module give-access (grant-access)
   (import scheme (chicken base)
    load-worlds server-handle user)
 
-  (define (grant-world-access)
+  (define (grant-access)
     (export-access
       (lambda (u txt #!key (exception #f))
         (broadcast-server txt #:exception (if exception u '())))
@@ -18,6 +18,3 @@
       user-name set-user-name!
       user-color set-user-color!
       user-description set-user-description!)))
-
-          
-

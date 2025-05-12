@@ -2,5 +2,5 @@
   (import scheme (chicken base)
           nc-connection load-worlds give-access)
 
-  (grant-world-access)
+  (grant-access)
   (start-server port))
